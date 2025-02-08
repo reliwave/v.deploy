@@ -1,0 +1,5 @@
+{
+    "misskeyApiToken": "YOUR_MISSKEY_API_TOKEN",
+    "misskeyUrl": "https://misskey.example.com",
+    "discordWebhookUrl": "https://discord.com/api/webhook"
+}
