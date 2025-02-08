@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# スクリプトのディレクトリに移動
+cd "$(dirname "$0")"
+
 # config.json を読み込む
 CONFIG_FILE="./config.json"
 MISSKEY_API_TOKEN=$(jq -r '.misskeyApiToken' $CONFIG_FILE)
