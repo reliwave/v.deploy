@@ -29,10 +29,11 @@ echo "Starting check process..."
 
 # check.sh が成功した場合に deploy.sh を実行
 if [ $? -eq 0 ]; then
-    CURRENT_HASH=$(sudo su - misskey -c "cd /home/misskey/misskey && git rev-parse HEAD")
-    RELEASE_HASH=$(sudo su - misskey -c "cd /home/misskey/misskey && git rev-parse origin/release")
+    CURRENT_VERSION=$(sudo su - misskey -c "cd /home/misskey/misskey && jq -r '.version' package.json")
+    sudo su - misskey -c "cd /home/misskey/misskey && git fetch origin release"
+    RELEASE_VERSION=$(sudo su - misskey -c "cd /home/misskey/misskey && git show origin/release:package.json | jq -r '.version'")
     
-    MESSAGE="Misskey Miry Remixに更新がありました\n現在のハッシュ: $CURRENT_HASH\n更新後のハッシュ: $RELEASE_HASH\n30秒後に更新しますね！"
+    MESSAGE="Misskey Miry Remixに更新がありました\n現在のバージョン: $CURRENT_VERSION\n更新後のバージョン: $RELEASE_VERSION\n30秒後に更新しますね！"
     send_misskey_api "$MESSAGE"
     send_discord_webhook $DISCORD_WEBHOOK_URL "$MESSAGE"
     
@@ -41,7 +42,8 @@ if [ $? -eq 0 ]; then
     echo "Check passed. Starting deployment..."
     ./deploy.sh
     if [ $? -eq 0 ]; then
-        MESSAGE="Misskey Miry Remix の更新が完了しました！\n更新前のハッシュ: $CURRENT_HASH\n更新後のハッシュ: $RELEASE_HASH\n引き続き、ぼかろすきーをお楽しみください！"
+        sleep 30
+        MESSAGE="Misskey Miry Remix の更新が完了しました！\n更新前のバージョン: $CURRENT_VERSION\n更新後のバージョン: $RELEASE_VERSION\n引き続き、ぼかろすきーをお楽しみください！"
         send_misskey_api "$MESSAGE"
         send_discord_webhook $DISCORD_WEBHOOK_URL "$MESSAGE"
         echo "Deployment completed successfully."
